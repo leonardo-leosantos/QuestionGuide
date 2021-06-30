@@ -1,0 +1,12 @@
+{
+  "name": "guiaperguntas",
+  "version": "1.0.0",
+  "description": "plataforma de perguntas e respostas",
+  "main": "index.js",
+  "author": "Leonardo Santos",
+  "license": "MIT",
+  "dependencies": {
+    "ejs": "^3.1.6",
+    "express": "^4.17.1"
+  }
+}
