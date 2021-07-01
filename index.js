@@ -1,5 +1,14 @@
 const express = require("express")
 const app = express()
+const connection = require('./domain/context')
+const Question_model = require('./domain/models/Question')
+
+// database
+connection.authenticate().then(() => {
+    console.log('db conectado!')
+}).catch((err) => {
+    console.log(err)
+})
 
 // configurando Express para usar o EJS como view engine
 app.set('view engine', 'ejs')
@@ -13,6 +22,9 @@ app.use(express.json())
 
 // ROTAS DO SERVIÇO
 app.get('/', (req, res) => {
+    Question_model.findAll({ raw: true }).then((perguntas) => {
+        console.log(perguntas)
+    })
     res.render('index')
 })
 
@@ -21,7 +33,13 @@ app.get('/ask', (req, res) => {
 })
 
 app.post('/savequestion', (req, res) => {
-    res.send(`form recebido ${req.body.titulo} ${req.body.descricao}`)
+    // inserindo dados no banco
+    Question_model.create({
+        title: req.body.titulo,
+        description: req.body.descricao
+    }).then(() => {
+        res.redirect('/')
+    })
 })
 
 app.listen(8080, () => {console.log('app run...')})
