@@ -2,7 +2,20 @@
 <body>
   <%- include('partials/navbar.ejs') %>
   <div class="container">
-    <h1>Estilo do bootstrap</h1>
+    <hr>
+    <a href="/ask" class="btn btn-info">Perguntar</a>
+    <hr>
+    <% perguntas.forEach(pergunta => { %>
+      <div style="margin-top: 15px;" class="card">
+        <div class="card-body">
+          <h3><%= pergunta.title %></h3>
+          <small><%= pergunta.description %></small>
+        </div>
+        <div class="card-footer">
+          <a href="/ask/<%= pergunta.id %>" class="btn btn-primary">Responder</a>
+        </div>
+      </div>
+    <% }) %>
   </div>
 </body>
 <%- include('partials/footer.ejs') %>

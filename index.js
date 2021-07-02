@@ -22,10 +22,14 @@ app.use(express.json())
 
 // ROTAS DO SERVIÇO
 app.get('/', (req, res) => {
-    Question_model.findAll({ raw: true }).then((perguntas) => {
-        console.log(perguntas)
+    Question_model.findAll({
+        raw: true,
+        order: [['createdAt','DESC']] // ASC = ordem crescente || DESC = ordem decrescente
+    }).then((perguntas) => {
+        res.render('index', {
+            perguntas: perguntas
+        })
     })
-    res.render('index')
 })
 
 app.get('/ask', (req, res) => {
@@ -39,6 +43,22 @@ app.post('/savequestion', (req, res) => {
         description: req.body.descricao
     }).then(() => {
         res.redirect('/')
+    })
+})
+
+app.get('/ask/:id', (req, res) => {
+    var id = req.params.id
+    Question_model.findOne({
+        where: {id: id}
+    }).then(question => {
+        if(question) {
+          res.render('onlyQuestion', {
+            pergunta: question
+          })
+        } else {
+            // não encontrada
+            res.redirect('/')
+        }
     })
 })
 
