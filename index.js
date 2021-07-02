@@ -1,7 +1,8 @@
 const express = require("express")
 const app = express()
 const connection = require('./domain/context')
-const Question_model = require('./domain/models/Question')
+const QuestionModel = require('./domain/models/Question')
+const ResponseModel = require('./domain/models/Response')
 
 // database
 connection.authenticate().then(() => {
@@ -22,7 +23,7 @@ app.use(express.json())
 
 // ROTAS DO SERVIÇO
 app.get('/', (req, res) => {
-    Question_model.findAll({
+    QuestionModel.findAll({
         raw: true,
         order: [['createdAt','DESC']] // ASC = ordem crescente || DESC = ordem decrescente
     }).then((perguntas) => {
@@ -38,7 +39,7 @@ app.get('/ask', (req, res) => {
 
 app.post('/savequestion', (req, res) => {
     // inserindo dados no banco
-    Question_model.create({
+    QuestionModel.create({
         title: req.body.titulo,
         description: req.body.descricao
     }).then(() => {
@@ -48,17 +49,37 @@ app.post('/savequestion', (req, res) => {
 
 app.get('/ask/:id', (req, res) => {
     var id = req.params.id
-    Question_model.findOne({
+    QuestionModel.findOne({
         where: {id: id}
     }).then(question => {
         if(question) {
-          res.render('onlyQuestion', {
-            pergunta: question
-          })
+            ResponseModel.findAll({
+                raw: true,
+                where: { id_question: question.id },
+                order: [
+                    ['createdAt','DESC']
+                ]
+            }).then(responses => {
+                res.render('onlyQuestion', {
+                    pergunta: question,
+                    respostas: responses
+                })
+            })
         } else {
             // não encontrada
             res.redirect('/')
         }
+    })
+})
+
+app.post('/saveresponse', (req, res) => {
+    // inserindo dados no banco
+    var id_question = req.body.id
+    ResponseModel.create({
+        body: req.body.body_response,
+        id_question: id_question
+    }).then(() => {
+        res.redirect(`/ask/${id_question}`)
     })
 })
 

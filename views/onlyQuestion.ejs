@@ -6,6 +6,26 @@
     <h1><%= pergunta.title %></h1>
     <p><%= pergunta.description %></p>
     <hr>
+    <form action="/saveresponse" method="post">
+      <div class="mb-3">
+        <h3 class="form-label">Responda</h3>
+      </div>
+      <div class="mb-3">
+        <textarea class="form-control" name="body_response" id="body_response" placeholder="Digite sua resposta" cols="30" rows="2"></textarea>
+        <input class="form-control" type="hidden" placeholder="Título da dúvida" name="id" value="<%= pergunta.id %>">
+      </div>
+      <button type="submit" class="btn btn-primary"><i class="bi bi-arrow-right-circle"></i>Responder</button>
+    </form>
+    <hr>
+      <h3>Respostas</h3>
+    <hr>
+    <% respostas.forEach(resposta => { %>
+        <div style="margin-top: 15px;" class="card">
+            <div class="card-body">
+                <p><%= resposta.body %></p>
+            </div>
+        </div>
+    <% }) %>
   </div>
 </body>
 <%- include('partials/footer.ejs') %>
